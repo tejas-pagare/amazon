@@ -10,6 +10,8 @@
 !.yarn/releases
 !.yarn/versions
 
+/stitch_e_commerce_marketplace_platform-1
+
 # testing
 /coverage
 
