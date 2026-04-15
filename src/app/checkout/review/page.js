@@ -1,13 +1,11 @@
-"use client";
-
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { fetchApi } from "@/lib/api";
 import Link from "next/link";
 
-export default function ReviewPage() {
+function ReviewResults() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const addressId = searchParams.get("addressId");
@@ -223,5 +221,13 @@ export default function ReviewPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function ReviewPage() {
+  return (
+    <Suspense fallback={<div className="p-12 text-center text-on-surface-variant">Loading review page...</div>}>
+      <ReviewResults />
+    </Suspense>
   );
 }

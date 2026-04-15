@@ -1,9 +1,8 @@
-"use client";
-
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-export default function ConfirmationPage() {
+function ConfirmationResults() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
 
@@ -53,5 +52,13 @@ export default function ConfirmationPage() {
         <p className="text-[11px] uppercase tracking-widest font-medium">Need help? Contact our 24/7 support team</p>
       </div>
     </main>
+  );
+}
+
+export default function ConfirmationPage() {
+  return (
+    <Suspense fallback={<div className="p-20 text-center">Loading confirmation...</div>}>
+      <ConfirmationResults />
+    </Suspense>
   );
 }
