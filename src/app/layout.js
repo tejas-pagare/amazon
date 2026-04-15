@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/context/Providers";
@@ -25,7 +26,9 @@ export default function RootLayout({ children }) {
       </head>
       <body className="text-on-background bg-surface-container-low min-h-screen flex flex-col font-['Inter'] antialiased tracking-tight mt-0">
         <Providers>
-          <Header />
+          <Suspense fallback={<div className="h-20 bg-[#131921]" />}>
+            <Header />
+          </Suspense>
           {children}
           <Footer />
         </Providers>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { fetchApi } from "@/lib/api";
 import { useCart } from "@/context/CartContext";
@@ -96,7 +96,7 @@ function buildPagination(currentPage, totalPages) {
   return [1, "...", currentPage, "...", totalPages];
 }
 
-export default function SearchPage() {
+function SearchResults() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { addToCart, actionLoading } = useCart();
@@ -525,5 +525,13 @@ export default function SearchPage() {
         )}
       </section>
     </main>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<SearchResultsSkeleton />}>
+      <SearchResults />
+    </Suspense>
   );
 }
