@@ -6,6 +6,8 @@ import { useEffect, useRef, useState, useCallback, Suspense } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { fetchApi } from "@/lib/api";
+import { Button } from "./Button";
+import { Input } from "./Input";
 
 const FALLBACK_IMAGE = "https://lh3.googleusercontent.com/aida-public/AB6AXuDwOVPqfQEB4oyVnlaP9tjGSog3mqdWEunFHLJjvpF3i1Wf5DOy7Ka7JYNxgQeI7Tmvvp2x8lWJx8_ZuU2epRa0N7LLXPRrWrhs6zid1_OtGV9_5MRwUVbmeAqVXd31cEHLQGrI65LCcXfzqpUUu2VPMSaPfOUrn1hZC-_qAzVLW04YypvrA0mQo3_xnx8eLtm6hZIHNGg4adLkAxvwe9iUX_57ley2k5MRZe-ieghZkTz9TCT5KugX9vzWSqDYfBL-dJEB_-wVs4U";
 
@@ -124,21 +126,31 @@ export function Header() {
               onSubmit={handleSearch}
               className="flex w-full bg-surface-container-lowest rounded-lg overflow-hidden h-10 group focus-within:ring-2 ring-primary-container ring-opacity-40"
             >
-              <button type="button" className="bg-surface-container-high px-3 text-on-surface-variant font-label text-xs hover:bg-surface-dim transition-colors shrink-0">All</button>
-              <input
+              <Button 
+                type="button" 
+                variant="ghost" 
+                className="bg-surface-container-high px-3 text-on-surface-variant font-label text-xs hover:bg-surface-dim transition-colors shrink-0 rounded-none h-full"
+              >
+                All
+              </Button>
+              <Input
                 value={search}
                 onChange={handleInputChange}
                 onFocus={() => { if (suggestions.length > 0) setShowDropdown(true); }}
-                className="flex-1 border-none focus:ring-0 bg-transparent text-sm px-4 font-body outline-none"
+                className="flex-1 border-none focus:ring-0 bg-transparent text-sm px-4 font-body outline-none h-full rounded-none"
                 placeholder="Search Amazon"
                 type="text"
                 autoComplete="off"
               />
-              <button type="submit" className="bg-primary-container text-on-primary-container px-5 flex items-center hover:bg-opacity-90 transition-all active:scale-90 cursor-pointer shrink-0">
+              <Button 
+                type="submit" 
+                variant="primary" 
+                className="px-5 flex items-center shrink-0 rounded-none h-full"
+              >
                 {searchLoading
                   ? <span className="material-symbols-outlined animate-spin text-lg">progress_activity</span>
                   : <span className="material-symbols-outlined">search</span>}
-              </button>
+              </Button>
             </form>
 
             {/* Live suggestions dropdown */}

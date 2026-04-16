@@ -6,6 +6,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { fetchApi } from "@/lib/api";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { ProductCard } from "@/components/ui/ProductCard";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 
 function ProductCardSkeleton() {
   return (
@@ -96,20 +99,6 @@ function ProductGrid() {
 
 
 
-  const renderStars = (rating) => {
-    const num = parseFloat(rating) || 0;
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      if (num >= i) {
-        stars.push(<span key={i} className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>);
-      } else if (num >= i - 0.5) {
-        stars.push(<span key={i} className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>star_half</span>);
-      } else {
-        stars.push(<span key={i} className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 0" }}>star</span>);
-      }
-    }
-    return <div className="flex text-orange-500">{stars}</div>;
-  };
 
   const sortedProducts = useMemo(() => {
     const nextProducts = [...products];
@@ -172,48 +161,14 @@ function ProductGrid() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {sortedProducts.map((product) => {
-          const isAdding = actionLoading[product.id];
-          return (
-          <div key={product.id} className={`bg-surface-container-lowest rounded-xl overflow-hidden p-6 flex flex-col group hover:shadow-[0px_20px_40px_rgba(15,17,17,0.06)] transition-all duration-300 ${isAdding ? 'opacity-75 pointer-events-none' : ''}`}>
-            <Link href={`/product/${product.id}`} className="relative aspect-square mb-6 overflow-hidden rounded-lg block">
-              <img 
-                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" 
-                alt={product.name} 
-                src={(product.images && product.images[0]) || "https://lh3.googleusercontent.com/aida-public/AB6AXuDwOVPqfQEB4oyVnlaP9tjGSog3mqdWEunFHLJjvpF3i1Wf5DOy7Ka7JYNxgQeI7Tmvvp2x8lWJx8_ZuU2epRa0N7LLXPRrWrhs6zid1_OtGV9_5MRwUVbmeAqVXd31cEHLQGrI65LCcXfzqpUUu2VPMSaPfOUrn1hZC-_qAzVLW04YypvrA0mQo3_xnx8eLtm6hZIHNGg4adLkAxvwe9iUX_57ley2k5MRZe-ieghZkTz9TCT5KugX9vzWSqDYfBL-dJEB_-wVs4U"}
-                onError={(e) => { e.currentTarget.src = "https://lh3.googleusercontent.com/aida-public/AB6AXuDwOVPqfQEB4oyVnlaP9tjGSog3mqdWEunFHLJjvpF3i1Wf5DOy7Ka7JYNxgQeI7Tmvvp2x8lWJx8_ZuU2epRa0N7LLXPRrWrhs6zid1_OtGV9_5MRwUVbmeAqVXd31cEHLQGrI65LCcXfzqpUUu2VPMSaPfOUrn1hZC-_qAzVLW04YypvrA0mQo3_xnx8eLtm6hZIHNGg4adLkAxvwe9iUX_57ley2k5MRZe-ieghZkTz9TCT5KugX9vzWSqDYfBL-dJEB_-wVs4U"; }}
-              />
-            </Link>
-            <div className="flex-1 flex flex-col">
-              <Link href={`/product/${product.id}`}>
-                <h3 className="text-on-surface font-medium text-base mb-1 line-clamp-2 leading-snug hover:text-orange-500 transition-colors">
-                  {product.name}
-                </h3>
-              </Link>
-              <div className="flex items-center gap-1 mb-2">
-                {renderStars(product.avg_rating)}
-                <span className="text-xs text-outline font-medium">{product.review_count || 0}</span>
-              </div>
-              <div className="mt-auto">
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-2xl font-bold text-on-surface">₹{product.effective_price || product.price}</span>
-                  {parseFloat(product.discount_pct) > 0 && (
-                    <span className="text-sm text-outline line-through">₹{product.price}</span>
-                  )}
-                </div>
-                <button 
-                  onClick={() => addToCart(product.id)}
-                  disabled={isAdding}
-                  className={`w-full flex items-center justify-center gap-2 bg-primary-container text-on-primary-container font-bold py-2.5 rounded-full transition-all ${isAdding ? 'opacity-70 cursor-not-allowed' : 'hover:bg-opacity-90 active:scale-[0.98] cursor-pointer'}`}
-                >
-                  {isAdding ? <span className="material-symbols-outlined animate-spin text-lg">progress_activity</span> : null}
-                  {isAdding ? 'Adding...' : 'Add to Cart'}
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-        })}
+        {sortedProducts.map((product) => (
+          <ProductCard 
+            key={product.id} 
+            product={product} 
+            onAddToCart={addToCart}
+            isAdding={actionLoading[product.id]}
+          />
+        ))}
       </div>
     </div>
   );
@@ -267,15 +222,16 @@ function CategorySlider({ categories }) {
               src={cat.image_url || categoryImages[cat.slug] || defaultImage} 
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent flex flex-col justify-center px-8 md:px-16 text-white">
-              <span className="bg-orange-500 text-white w-fit px-4 py-1 rounded-full text-[10px] font-black tracking-widest uppercase mb-4 shadow-sm">Featured Category</span>
+              <Badge variant="primary" className="w-fit mb-4 uppercase tracking-widest text-[10px] py-1 px-4 shadow-sm">Featured Category</Badge>
               <h1 className="text-4xl md:text-7xl font-black tracking-tighter max-w-2xl mb-4 drop-shadow-lg leading-none">{cat.name}</h1>
               <p className="text-base md:text-xl text-gray-100 max-w-lg mb-8 drop-shadow-md font-medium">{cat.description || "Discover the best limited-time deals on our curated collections."}</p>
-              <button 
+              <Button 
                 onClick={() => router.push(`/search?category=${cat.slug}`)}
-                className="bg-white text-slate-900 w-fit px-10 py-4 rounded-full font-black text-sm uppercase tracking-widest shadow-2xl hover:bg-orange-500 hover:text-white transition-all duration-300 active:scale-95 cursor-pointer"
+                variant="outline"
+                className="bg-white text-slate-900 w-fit px-10 py-7 rounded-full font-black text-sm uppercase tracking-widest shadow-2xl hover:bg-orange-500 hover:text-white transition-all duration-300"
               >
                 Shop the Collection
-              </button>
+              </Button>
             </div>
           </div>
         ))}
@@ -333,7 +289,7 @@ export default function Home() {
           <div className="flex-1">
             <h2 className="text-3xl font-bold text-on-surface mb-4">The Smart Home Curator</h2>
             <p className="text-on-surface-variant mb-6 font-body">Transform your living space with our selection of integrated smart devices. From lighting to security, curated for the modern home.</p>
-            <button className="bg-secondary-container text-on-secondary-container px-6 py-2.5 rounded-full font-bold active:scale-95 transition-transform cursor-pointer">Explore Smart Home</button>
+            <Button variant="secondary" className="px-6 py-2.5">Explore Smart Home</Button>
           </div>
           <div className="flex-1">
             <img className="w-full rounded-lg shadow-md" alt="Smart speaker" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpYfmByp3LzRGN1_yUUK4dl_pL0EKlKdXICHtcTyKGS0gbQJWPQH9YMjziez_ITqRgxZ5xvsA_dgkOp2opJcTJtViZ2N01LBj5XGrsB11nCoi_Q-QrgiXV5KGmqvughhtkCGGenW9hnOUYb_VES5Xk39N85Gur_2XrAjwCFlVfF_Frc2yj9ZupXuwhILYKgM9eD2QIk0KbEpRUMLEcWQhKwf08j5SBfFsWLt5c-BhQbQ1v1YAOeq2oSChLnEfGKmshK81aQnP5MFI" />
