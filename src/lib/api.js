@@ -23,7 +23,7 @@ export async function fetchApi(endpoint, options = {}) {
     data = text ? JSON.parse(text) : {};
     console.log("API Response:", data);
   } catch (err) {
-    throw new Error(`Failed to reach the API at ${url}. Check that the frontend is running on port 3001 and the backend is running on ${process.env.NEXT_PUBLIC_BACKEND_ORIGIN || "http://localhost:3000"}.`);
+    throw new Error(`Failed to reach the API at ${url}. Check that the frontend is running correctly and the backend is running on ${process.env.NEXT_PUBLIC_BACKEND_ORIGIN || process.env.BACKEND_ORIGIN || "http://localhost:3000"}.`);
   }
 
   if (!response.ok) {
