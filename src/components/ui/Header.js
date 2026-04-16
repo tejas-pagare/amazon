@@ -12,11 +12,12 @@ const FALLBACK_IMAGE = "https://lh3.googleusercontent.com/aida-public/AB6AXuDwOV
 export function Header() {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const { currentUser, logout } = useAuth();
   const { cart } = useCart();
   const [search, setSearch] = useState("");
   const [categories, setCategories] = useState([]);
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [activeSearch, setActiveSearch] = useState("");
 
   // Live search state
   const [suggestions, setSuggestions] = useState([]);
@@ -34,8 +35,6 @@ export function Header() {
   };
 
   const cartItemCount = cart?.items?.reduce((total, item) => total + item.quantity, 0) || 0;
-  const activeCategory = searchParams.get("category");
-  const activeSearch = searchParams.get("search") || "";
 
   // Debounced live search using /api/v1/search
   const fetchSuggestions = useCallback(async (query) => {
@@ -104,6 +103,12 @@ export function Header() {
 
   return (
     <>
+      <Suspense fallback={null}>
+        <SearchParamHandler 
+          setActiveCategory={setActiveCategory} 
+          setActiveSearch={setActiveSearch} 
+        />
+      </Suspense>
       <header className="bg-[#131921]/90 backdrop-blur-xl sticky top-0 w-full z-50 flex items-center justify-between px-6 py-3 transition-colors duration-200 shadow-none">
         <div className="flex items-center gap-8 flex-1">
           <Link href="/" className="flex items-center group transition-transform active:scale-95 pt-1">
@@ -248,4 +253,18 @@ export function Header() {
       </div>
     </>
   );
+}
+
+function SearchParamHandler({ setActiveCategory, setActiveSearch }) {
+  const searchParams = useSearchParams();
+  
+  useEffect(() => {
+    const category = searchParams.get("category");
+    const search = searchParams.get("search") || "";
+    
+    setActiveCategory(category);
+    setActiveSearch(search);
+  }, [searchParams, setActiveCategory, setActiveSearch]);
+
+  return null;
 }
