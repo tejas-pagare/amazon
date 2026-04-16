@@ -228,7 +228,7 @@ function CategorySlider({ categories }) {
               <Button 
                 onClick={() => router.push(`/search?category=${cat.slug}`)}
                 variant="outline"
-                className="bg-white text-slate-900 w-fit px-10 py-7 rounded-full font-black text-sm uppercase tracking-widest shadow-2xl hover:bg-orange-500 hover:text-white transition-all duration-300"
+                className="bg-white text-slate-900 w-fit px-6 py-3 rounded-full font-bold text-xs uppercase tracking-wider shadow-xl hover:bg-orange-500 hover:text-white transition-all duration-300"
               >
                 Shop the Collection
               </Button>

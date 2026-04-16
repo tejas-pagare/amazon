@@ -133,15 +133,27 @@ export function Header() {
               >
                 All
               </Button>
-              <Input
-                value={search}
-                onChange={handleInputChange}
-                onFocus={() => { if (suggestions.length > 0) setShowDropdown(true); }}
-                className="flex-1 border-none focus:ring-0 bg-transparent text-sm px-4 font-body outline-none h-full rounded-none"
-                placeholder="Search Amazon"
-                type="text"
-                autoComplete="off"
-              />
+              <div className="flex-1 relative flex items-center">
+                <Input
+                  value={search}
+                  onChange={handleInputChange}
+                  onFocus={() => { if (suggestions.length > 0) setShowDropdown(true); }}
+                  className="w-full border-none focus:ring-0 bg-transparent text-sm pl-4 pr-9 font-body outline-none h-full rounded-none"
+                  placeholder="Search Amazon"
+                  type="text"
+                  autoComplete="off"
+                />
+                {search && (
+                  <button
+                    type="button"
+                    onClick={() => { setSearch(""); setShowDropdown(false); }}
+                    className="absolute right-2 text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer"
+                    aria-label="Clear search"
+                  >
+                    <span className="material-symbols-outlined text-xl">close</span>
+                  </button>
+                )}
+              </div>
               <Button 
                 type="submit" 
                 variant="primary" 
